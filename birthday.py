@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # IMPORTANT: Change this to a strong, randomly generated key in a production environment!
-app.secret_key = 'desola@08030527547_birthday'
+app.secret_key = os.environ.get('SECRET_KEY',os.urandom('desola@08030527547_birthday').hex())
 
 # Configuration for file uploads
 app.config['UPLOAD_FOLDER'] = 'uploads'
