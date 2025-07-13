@@ -1,0 +1,145 @@
+/* static/css/style.css */
+body {
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0; /* Changed from 2px for better control */
+    padding: 0;
+    background: linear-gradient(to right, #ffc0cb, #add8e6); /* Pink to Light Blue */
+    color: #333;
+    display: flex;
+    justify-content: center; /* Corrected typo */
+    align-items: baseline; /* Added align-items for vertical alignment, adjust as needed */
+    min-height: 100vh; /* Corrected typo */
+    overflow-x: hidden;
+}
+
+.container { /* Corrected typo from .contanier */
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px; /* Corrected syntax */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+    border: 3px solid #ffd700; /* Missing semicolon added */
+    position: relative;
+    margin: 20px 0; /* Added margin to prevent sticking to edges on small screens */
+}
+
+h1 {
+    color: #e91e63; /* Corrected missing colon */
+    font-family: 'Pacifico', cursive; /* Added 'Pacifico' font, ensure it's imported or available */
+    font-size: 3em;
+    margin-bottom: 20px; /* Corrected syntax */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Corrected syntax and rgba */
+}
+
+p.message {
+    font-size: 1.2em;
+    line-height: 1.8;
+    color: #555;
+    white-space: pre-wrap;
+    text-align: left;
+    margin-bottom: 30px;
+    border-left: 5px solid #ff6347;
+    padding-left: 15px;
+}
+
+.image-container {
+    margin-top: 30px;
+    margin-bottom: 30px; /* Corrected syntax */
+}
+
+.image-container img { /* Corrected 'image' to 'img' */
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Corrected rgba */
+    border: 2px solid #6a1b9a;
+}
+
+.upload-section {
+    margin-top: 30px;
+    padding: 20px;
+    border-top: 1px dashed #ccc;
+    text-align: left;
+}
+
+.upload-section label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.upload-section input[type="file"] {
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%; /* Make file input take full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.upload-section input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Make submit button take full width */
+    box-sizing: border-box;
+}
+
+.upload-section input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.flash-messages {
+    list-style: none;
+    padding: 10px;
+    margin: 0 0 20px 0;
+    background-color: #ffe0b2; /* Missing semicolon added */
+    border: 1px solid #ff9800;
+    border-radius: 5px;
+    color: #e65100;
+    font-weight: bold;
+}
+
+.flash-messages li { /* Changed from .flash-message li to match .flash-messages */
+    margin-bottom: 5px;
+}
+
+/* Specific styles for flash message categories for better visual feedback */
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.flash-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+/* Basic styling for audio player */
+audio {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #777;
+}
