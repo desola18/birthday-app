@@ -1,3 +1,4 @@
+
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
@@ -150,3 +151,4 @@ if __name__ == '__main__':
     # You should place your 'birthday_song.mp3' inside the 'static/audio' directory.
 
     app.run(debug=True, host='0.0.0.0')
+

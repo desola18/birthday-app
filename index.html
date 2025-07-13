@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0">
+    <title>Happy Birthday, My Dearest!</title> 
+    <link rel="stylesheet" 
+          href="'{{url_for('static',filename='css/style.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Georgia&display=swap" 
+          rel="stylesheet"> 
+</head> 
+<body>
+    <div class="container">
+        <h1>HAPPY BIRTHDAY, MY DEAREST MRS. MORIAM LUCIA TROMBI!</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {%if messages%}
+            <ul class="flash-messages">
+                {% for category, message in messages%}
+                <li class ="{{category}}">{{message}}</li>
+                {% endfor %} 
+            </ul>
+            {% endif %}
+        {%endwith %}
+                      
+        <div class="image-container">
+             {% if image_filename %}
+                <img src="{{ url_for('uploaded_file', filename=image_filename) }}" alt="Her picture">
+             {%else%}
+                 <p> No picture uploaded yet.Use the form below!</p>
+             {%endif%}    
+        </div>
+        <p class="message">{{birthday_message}}</p>
+        <audio autoplay loop>
+            <source src="{{ url_for('static', filename=audio_file) }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+</audio>
+        <div class="upload-section">
+            <h2>Upload or Change Her Picture:</h2>
+            <form method="post" enctype="multipart/form-data">
+                <label for="file">Choose a picture:</label>
+                <input type="file" name="file" id="file" required>
+                <input type="submit" value="Upload Picture">
+            </form>
+            <p>
+                <small>Upload a new picture here. The previous one will be replaced.</small>
+            </p>
+        </div>
+    </div>
+</body>
+</html>   
