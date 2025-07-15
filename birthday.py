@@ -1,105 +1,50 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
-import pymysql # <--- CORRECTED THIS LINE!
-from pymysql.cursors import DictCursor # This line is good as is, from our previous discussion.
-# from werkzeug.utils import secure_filename
+import pymysql
+from pymysql.cursors import DictCursor
 
 app = Flask(__name__)
+
 # IMPORTANT: Change this to a strong, randomly generated key in a production environment!
+# This uses the SECRET_KEY environment variable set on Render.
 app.secret_key = os.environ.get('SECRET_KEY')
 
+# Fallback for local development if SECRET_KEY isn't set in your local environment
 if not app.secret_key:
     print("WARNING: SECRET_KEY environment variable not set. Generating a temporary one for local development.")
     app.secret_key = os.urandom(24).hex() # Generates a new key if not found
 
 def get_db_connection():
+    """
+    Establishes and returns a database connection using environment variables.
+    """
     connection = pymysql.connect(
         host=os.environ.get('DB_HOST'),
         user=os.environ.get('DB_USER'),
         password=os.environ.get('DB_PASSWORD'),
         database=os.environ.get('DB_NAME'),
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=DictCursor # Use DictCursor for dictionary-like rows
     )
     return connection
 
-# Configuration for file uploads
-#app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
-#app.config['ALLOWED_EXTENSIONS'] = ['png', 'jpg', 'jpeg', 'gif'] # Corrected to list
-#app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16 MB
+# --- Main Route for Birthday Page ---
 @app.route('/', methods=['GET', 'POST'])
 def birthday_page():
     """
-    Handles the display of the birthday page and image uploads.
+    Handles the display of the birthday page.
+    File uploads are explicitly disabled in this version for Render deployment.
     """
-    image_filename = url_for('static',filename='uploads/moriam_image.png') # Initialize to None
+    # Set the filename for the static image.
+    # MAKE SURE 'moriam_image.png' (case-sensitive) exists in your 'static/uploads/' folder.
+    image_filename = url_for('static', filename='uploads/moriam_image.png')
 
-    if request.method == 'POST': # <--- THIS LINE MUST BE INDENTED
+    # This block prevents any file uploads from being processed
+    # as we're using a static image and not persistent storage.
+    if request.method == 'POST':
         flash('File uploads are temporarily disabled.', 'info')
-        return redirect(request.url) # This return is now inside the function
+        return redirect(request.url)
 
-# Ensure the upload folder exists
-#if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    #os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# --- Helper Functions ---
-#def allowed_file(filename):
-    """
-     Checks if a given filename has an allowed extension.
-    """
-#    return '.' in filename and \
-#           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-# --- Routes ---
-#@app.route('/', methods=['GET', 'POST'])
-#def birthday_page():
-#    """
-#    Handles the display of the birthday page and image uploads.
-#    """
- #   image_filename = None # Initialize to None for dynamic loading
-    # Load existing image filename if it exists
-  #  image_path_file = os.path.join(app.config['UPLOAD_FOLDER'], 'current_image.txt')
-
-  #  if os.path.exists(image_path_file):
-   #      try:
-   #         with open(image_path_file, 'r') as f:
-    #            image_filename = f.read().strip()
-   #     except Exception as e:
-            # Handle potential file read errors
-     #       print(f"Error reading current_image.txt: {e}")
-    #        image_filename = None # Ensure it's None if there's an error
-
-    # Handle POST request for file upload
-   # if request.method == 'POST':
-    #    flash('File uploads are temporarily disable.', 'info')
-      #  return redirect(request.url)
-        # Check if the post request has the file part
-     #   if 'file' not in request.files:
-      #      flash('No file part', 'error') # Added category for styling
-      #      return redirect(request.url)
-
-      #  file = request.files['file']
-
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-       # if file.filename == '':
-        #    flash('No selected file', 'warning') # Added category
-        #    return redirect(request.url)
-
-        #if file and allowed_file(file.filename):
-         #   filename = secure_filename(file.filename)
-        #    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-         #   try:
-          #      file.save(file_path)
-           #     # Store the current image filename for persistence
-            #    with open(image_path_file, 'w') as f:
-             #       f.write(filename)
-
-            #    flash('Image successfully uploaded and set!', 'success') # Added category
-             #   return redirect(url_for('birthday_page'))
-            #except Exception as e:
-             #   return redirect(request.url)
-
-    # The birthday message
+    # The birthday message content (this block MUST be indented under birthday_page)
     birthday_message = """
     My Dearest Guidian Angel,
 
@@ -153,25 +98,41 @@ def birthday_page():
     """
     # Pass the message, image filename, and audio file to the template
     return render_template('index.html',
-                           birthday_message=birthday_message, # Corrected to pass the variable
+                           birthday_message=birthday_message,
                            image_filename=image_filename,
                            audio_file='audio/Happy_Birthday_song.mp3') # Ensure this matches your file name
 
-# Route to serve uploaded files
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    """
-    Serves uploaded files from the UPLOAD_FOLDER.
-    """
-    from flask import send_from_directory
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+# The following code related to file uploads is now completely commented out
+# or removed, as it's not needed for displaying a static image and caused errors.
 
+# # Configuration for file uploads
+# #app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+# #app.config['ALLOWED_EXTENSIONS'] = ['png', 'jpg', 'jpeg', 'gif']
+# #app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+# # Ensure the upload folder exists (NOT NEEDED FOR STATIC)
+# # if not os.path.exists(app.config['UPLOAD_FOLDER']):
+# #     os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# # Helper Functions (NOT NEEDED FOR STATIC)
+# # def allowed_file(filename):
+# #     return '.' in filename and \
+# #                 filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# # Route to serve uploaded files (REMOVED, NOT NEEDED FOR STATIC)
+# # @app.route('/uploads/<filename>')
+# # def uploaded_file(filename):
+# #     from flask import send_from_directory
+# #     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+# --- Standard Flask entry point ---
 if __name__ == '__main__':
-    # Create the 'audio' directory if it doesn't exist
+    # Create the 'audio' directory if it doesn't exist for local development
     audio_folder = os.path.join(app.root_path, 'static', 'audio')
     if not os.path.exists(audio_folder):
         os.makedirs(audio_folder)
-    # You should place your 'birthday_song.mp3' inside the 'static/audio' directory.
+    # You should place your 'Happy_Birthday_song.mp3' inside the 'static/audio' directory.
 
+    # Run the app for local development. On Render, gunicorn will run it.
     app.run(debug=True, host='0.0.0.0')
-
