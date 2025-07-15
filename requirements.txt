@@ -39,8 +39,7 @@ matplotlib==3.10.3
 matplotlib-inline==0.1.7
 mistune==3.1.3
 multitasking==0.0.11
-mysql-connector-python==8.0.33
-mysql-connector-python
+PyMySQL
 nbclient==0.10.2
 nbconvert==7.16.6
 nbformat==5.10.4

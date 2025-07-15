@@ -1,84 +1,107 @@
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
-from werkzeug.utils import secure_filename
+import pymysql # <--- CORRECTED THIS LINE!
+from pymysql.cursors import DictCursor # This line is good as is, from our previous discussion.
+# from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # IMPORTANT: Change this to a strong, randomly generated key in a production environment!
-app.secret_key = os.environ.get('SECRET_KEY',os.urandom('desola@08030527547_birthday').hex())
+app.secret_key = os.environ.get('SECRET_KEY')
+
+if not app.secret_key:
+    print("WARNING: SECRET_KEY environment variable not set. Generating a temporary one for local development.")
+    app.secret_key = os.urandom(24).hex() # Generates a new key if not found
+
+def get_db_connection():
+    connection = pymysql.connect(
+        host=os.environ.get('DB_HOST'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
+        database=os.environ.get('DB_NAME'),
+        cursorclass=pymysql.cursors.DictCursor
+    )
+    return connection
 
 # Configuration for file uploads
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['ALLOWED_EXTENSIONS'] = ['png', 'jpg', 'jpeg', 'gif'] # Corrected to list
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16 MB
-
-# Ensure the upload folder exists
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# --- Helper Functions ---
-def allowed_file(filename):
-    """
-    Checks if a given filename has an allowed extension.
-    """
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-# --- Routes ---
+#app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+#app.config['ALLOWED_EXTENSIONS'] = ['png', 'jpg', 'jpeg', 'gif'] # Corrected to list
+#app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16 MB
 @app.route('/', methods=['GET', 'POST'])
 def birthday_page():
     """
     Handles the display of the birthday page and image uploads.
     """
-    image_filename = None # Initialize to None for dynamic loading
-    # Load existing image filename if it exists
-    image_path_file = os.path.join(app.config['UPLOAD_FOLDER'], 'current_image.txt')
+    image_filename = url_for('static',filename='uploads/moriam_image.png') # Initialize to None
 
-    if os.path.exists(image_path_file):
-        try:
-            with open(image_path_file, 'r') as f:
-                image_filename = f.read().strip()
-        except Exception as e:
+    if request.method == 'POST': # <--- THIS LINE MUST BE INDENTED
+        flash('File uploads are temporarily disabled.', 'info')
+        return redirect(request.url) # This return is now inside the function
+
+# Ensure the upload folder exists
+#if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    #os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# --- Helper Functions ---
+#def allowed_file(filename):
+    """
+     Checks if a given filename has an allowed extension.
+    """
+#    return '.' in filename and \
+#           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# --- Routes ---
+#@app.route('/', methods=['GET', 'POST'])
+#def birthday_page():
+#    """
+#    Handles the display of the birthday page and image uploads.
+#    """
+ #   image_filename = None # Initialize to None for dynamic loading
+    # Load existing image filename if it exists
+  #  image_path_file = os.path.join(app.config['UPLOAD_FOLDER'], 'current_image.txt')
+
+  #  if os.path.exists(image_path_file):
+   #      try:
+   #         with open(image_path_file, 'r') as f:
+    #            image_filename = f.read().strip()
+   #     except Exception as e:
             # Handle potential file read errors
-            print(f"Error reading current_image.txt: {e}")
-            image_filename = None # Ensure it's None if there's an error
+     #       print(f"Error reading current_image.txt: {e}")
+    #        image_filename = None # Ensure it's None if there's an error
 
     # Handle POST request for file upload
-    if request.method == 'POST':
+   # if request.method == 'POST':
+    #    flash('File uploads are temporarily disable.', 'info')
+      #  return redirect(request.url)
         # Check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part', 'error') # Added category for styling
-            return redirect(request.url)
+     #   if 'file' not in request.files:
+      #      flash('No file part', 'error') # Added category for styling
+      #      return redirect(request.url)
 
-        file = request.files['file']
+      #  file = request.files['file']
 
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file', 'warning') # Added category
-            return redirect(request.url)
+       # if file.filename == '':
+        #    flash('No selected file', 'warning') # Added category
+        #    return redirect(request.url)
 
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            try:
-                file.save(file_path)
-                # Store the current image filename for persistence
-                with open(image_path_file, 'w') as f:
-                    f.write(filename)
+        #if file and allowed_file(file.filename):
+         #   filename = secure_filename(file.filename)
+        #    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+         #   try:
+          #      file.save(file_path)
+           #     # Store the current image filename for persistence
+            #    with open(image_path_file, 'w') as f:
+             #       f.write(filename)
 
-                flash('Image successfully uploaded and set!', 'success') # Added category
-                return redirect(url_for('birthday_page'))
-            except Exception as e:
-                flash(f'Error uploading file: {e}', 'error') # Added category
-                return redirect(request.url)
-        else:
-            flash('Allowed image types are png, jpg, jpeg, gif', 'error') # Added category
-            return redirect(request.url)
+            #    flash('Image successfully uploaded and set!', 'success') # Added category
+             #   return redirect(url_for('birthday_page'))
+            #except Exception as e:
+             #   return redirect(request.url)
 
     # The birthday message
     birthday_message = """
-    My Dearest Guidan Angel,
+    My Dearest Guidian Angel,
 
     Today, as you celebrate another beautiful year, my heart overflows with gratitude for your boundless love, unwavering support, and the incredible wisdom
     you've shared. You've not just been a guide; you've been a beacon, illuminating paths I didn't even know existed.
